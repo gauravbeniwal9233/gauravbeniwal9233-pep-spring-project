@@ -26,4 +26,17 @@ public class AccountService {
         return accountRepository.save(newAccount);
     }
 
+    public Account authenticate(String username, String password) throws IllegalArgumentException {
+        if (username == null || username.trim().isEmpty() || password == null || password.trim().isEmpty()){
+            throw new IllegalArgumentException("Username and password can't be blank !!");
+        }
+
+        Account account = accountRepository.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("Invalid username or passwrd !!"));
+
+        if (!account.getPassword().equals(password)) {
+            throw new IllegalArgumentException("Invalid username or pass !!");
+        }
+
+        return account;
+    }
 }
