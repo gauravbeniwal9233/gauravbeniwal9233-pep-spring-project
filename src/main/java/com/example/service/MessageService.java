@@ -10,6 +10,8 @@ import com.example.entity.Message;
 import com.example.repository.AccountRepository;
 import com.example.repository.MessageRepository;
 
+import antlr.debug.MessageAdapter;
+
 @Service
 public class MessageService {
 
@@ -67,5 +69,9 @@ public class MessageService {
         existingMessage.setMessageText(newMessafgeText);
         messageRepository.save(existingMessage);
         return 1;
+    }
+
+    public List<Message> getMessagesByAccountId(Integer accountId) {
+        return messageRepository.findAllByPostedBy(accountId);
     }
 }
