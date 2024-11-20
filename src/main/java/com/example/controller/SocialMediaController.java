@@ -6,7 +6,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -77,5 +79,25 @@ public class SocialMediaController {
     public ResponseEntity<Message> getMessageById(@PathVariable("message_id") Integer messageId) {
         Optional<Message> message = messageService.getMessageById(messageId);
         return message.map(ResponseEntity::ok).orElse(ResponseEntity.ok(null));
+    }
+
+    @DeleteMapping("/messages/{message_id}")
+    public ResponseEntity<?> deleteMessageById(@PathVariable("message_id")Integer messageId) {
+        boolean isDeleted = messageService.deleteMessageById(messageId);
+        if (isDeleted) {
+            return ResponseEntity.ok(1);
+        } else {
+            return ResponseEntity.ok(null);
+        }
+    }
+
+    @PatchMapping("/messages/{message_id}")
+    public ResponseEntity<?> updateMessageById(@PathVariable("message_id")Integer messageId, @RequestBody Message updatMessage) {
+        try {
+            int rowsUpdated = messageService.updateMessageById(messageId, updatMessage.getMessageText());
+            return ResponseEntity.ok(rowsUpdated);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }

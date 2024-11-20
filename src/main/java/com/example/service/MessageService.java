@@ -41,4 +41,31 @@ public class MessageService {
     public Optional<Message> getMessageById(Integer messageId) {
         return messageRepository.findById(messageId);
     }
+
+    public boolean deleteMessageById(Integer messageId) {
+        if (messageRepository.existsById(messageId)) {
+            messageRepository.deleteById(messageId);
+            return true;
+        }
+        return false;
+    }
+
+    public int updateMessageById(Integer messageId, String newMessafgeText) {
+        if (newMessafgeText == null || newMessafgeText.trim().isEmpty()) {
+            throw new IllegalArgumentException("text can't be blank !!");
+        }
+        if (newMessafgeText.length() > 255) {
+            throw new IllegalArgumentException("text must be under 255 char !!");
+        }
+
+        Optional<Message> optionalMessage = messageRepository.findById((messageId));
+        if (optionalMessage.isEmpty()) {
+            throw new IllegalArgumentException("msg w/ given id not exist !!");
+        }
+
+        Message existingMessage = optionalMessage.get();
+        existingMessage.setMessageText(newMessafgeText);
+        messageRepository.save(existingMessage);
+        return 1;
+    }
 }
